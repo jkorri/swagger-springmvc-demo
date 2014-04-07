@@ -3,8 +3,8 @@ package com.ak.swaggermvc.demo.config;
 import com.mangofactory.swagger.authorization.AuthorizationContext;
 import com.mangofactory.swagger.configuration.JacksonScalaSupport;
 import com.mangofactory.swagger.configuration.SpringSwaggerConfig;
-import com.mangofactory.swagger.configuration.SpringSwaggerModelConfig;
 import com.mangofactory.swagger.configuration.SwaggerGlobalSettings;
+import com.mangofactory.swagger.core.ClassOrApiAnnotationResourceGrouping;
 import com.mangofactory.swagger.core.DefaultSwaggerPathProvider;
 import com.mangofactory.swagger.core.SwaggerApiResourceListing;
 import com.mangofactory.swagger.core.SwaggerPathProvider;
@@ -44,8 +44,6 @@ public class SwaggerConfig {
 
   @Autowired
   private SpringSwaggerConfig springSwaggerConfig;
-  @Autowired
-  private SpringSwaggerModelConfig springSwaggerModelConfig;
 
   /**
    * Adds the jackson scala module to the MappingJackson2HttpMessageConverter registered with spring
@@ -69,7 +67,7 @@ public class SwaggerConfig {
     SwaggerGlobalSettings swaggerGlobalSettings = new SwaggerGlobalSettings();
     swaggerGlobalSettings.setGlobalResponseMessages(springSwaggerConfig.defaultResponseMessages());
     swaggerGlobalSettings.setIgnorableParameterTypes(springSwaggerConfig.defaultIgnorableParameterTypes());
-    swaggerGlobalSettings.setParameterDataTypes(springSwaggerModelConfig.defaultParameterDataTypes());
+    swaggerGlobalSettings.setAlternateTypeProvider(springSwaggerConfig.defaultAlternateTypeProvider());    
     return swaggerGlobalSettings;
   }
 
@@ -136,7 +134,7 @@ public class SwaggerConfig {
     apiListingReferenceScanner.setExcludeAnnotations(springSwaggerConfig.defaultExcludeAnnotations());
 
     //
-    apiListingReferenceScanner.setResourceGroupingStrategy(springSwaggerConfig.defaultResourceGroupingStrategy());
+    apiListingReferenceScanner.setResourceGroupingStrategy(new ClassOrApiAnnotationResourceGrouping());
 
     //Path provider used to generate the appropriate uri's
     apiListingReferenceScanner.setSwaggerPathProvider(demoPathProvider());
@@ -233,10 +231,6 @@ public class SwaggerConfig {
   private class DemoRelativeSwaggerPathProvider extends DefaultSwaggerPathProvider{
     @Override public String getAppBasePath() {
       return "/swagger-springmvc-demo";
-    }
-
-    @Override public String getSwaggerDocumentationBasePath() {
-      return "/api-docs";
     }
   }
 

@@ -7,7 +7,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.ServletContext;
 
 public class DemoPathProvider implements SwaggerPathProvider {
-    private SwaggerPathProvider defaultSwaggerPathProvider;
+
+	private SwaggerPathProvider defaultSwaggerPathProvider;
     @Autowired
     private ServletContext servletContext;
 
@@ -25,21 +26,13 @@ public class DemoPathProvider implements SwaggerPathProvider {
                 .toString();
     }
 
-    @Override
-    public String getSwaggerDocumentationBasePath() {
-        return UriComponentsBuilder
-                .fromHttpUrl(getAppBasePath())
-                .pathSegment("api-docs/")
-                .build()
-                .toString();
-    }
-
-   @Override
-   public String getRequestMappingEndpoint(String requestMappingPattern) {
-      return defaultSwaggerPathProvider.getRequestMappingEndpoint(requestMappingPattern);
-   }
-
    public void setDefaultSwaggerPathProvider(SwaggerPathProvider defaultSwaggerPathProvider) {
         this.defaultSwaggerPathProvider = defaultSwaggerPathProvider;
     }
+   
+   @Override
+	public String sanitizeRequestMappingPattern(String requestMappingPattern) {
+	   return this.defaultSwaggerPathProvider.sanitizeRequestMappingPattern(requestMappingPattern);
+   }
+   
 }
